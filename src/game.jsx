@@ -12,26 +12,29 @@ class Board extends React.Component {
 
     renderSquare(i) {
         return <Square value={this.props.squares[i]}
-            onClick={ () => this.props.onClick(i) }/>;
+            onClick={ () => this.props.onClick(i) }
+            key={i}
+            />;
     };
+
     render() {
         return (
           <div>
-            <div className="board-row">
-              {this.renderSquare(0)}
-              {this.renderSquare(1)}
-              {this.renderSquare(2)}
-            </div>
-            <div className="board-row">
-              {this.renderSquare(3)}
-              {this.renderSquare(4)}
-              {this.renderSquare(5)}
-            </div>
-            <div className="board-row">
-              {this.renderSquare(6)}
-              {this.renderSquare(7)}
-              {this.renderSquare(8)}
-            </div>
+              {
+                  Array(this.props.size).fill(1).map( (o,i) => {
+                      var iKey = 'i'+i;
+                      return (
+                          <div className="board-row" key={iKey}>
+                            {
+                              Array(this.props.size).fill(1).map( (o,j) => {
+                                  var jKey = j+(this.props.size*i);
+                                  return this.renderSquare(jKey);
+                              })
+                            }
+                          </div>
+                      );
+                  })
+              }
           </div>
         );
     };
@@ -44,39 +47,54 @@ export default class Game extends React.Component {
         super();
         this.state = {
             history: [{
-                squares: Array(9).fill(null)
+                squares: [],
+                squareIndex: null
             }],
             xIsNext: true,
-            stepNumber : 0
+            stepNumber : 0,
+            selectedLink: null,
+            size: 3
         };
     };
 
     handleClick(i) {
         const history = this.state.history.slice(0,this.state.stepNumber+1);
         const current = history[history.length - 1];
-        const squares = current.squares.slice();
+        const squares = JSON.parse(JSON.stringify(current.squares.slice()));
         if(calculateWinner(squares) || squares[i]){
             return;
         }
         squares[i] = this.state.xIsNext ? 'X' : 'O';
         this.setState({
             history: history.concat([{
-                squares: squares
+                squares: squares,
+                squareIndex: i
             }]),
             xIsNext: !this.state.xIsNext,
-            stepNumber: history.length
+            stepNumber: history.length,
+            selectedLink: null,
+            size: 3
         });
     };
 
     jumpTo(step) {
       this.setState({
+        history: this.state.history.slice(0,step+1),
         stepNumber: step,
         xIsNext: (step % 2) ? false : true,
+        selectedLink: step
       });
     };
 
-  render() {
+    boldClass(move) {
+        var boldClass = '';
+        if(this.state.selectedLink === move){
+            boldClass = 'text-bold';
+        }
+        return boldClass;
+    }
 
+  render() {
       const history = this.state.history;
       const current = history[this.state.stepNumber];
       const winner = calculateWinner(current.squares);
@@ -88,11 +106,12 @@ export default class Game extends React.Component {
           status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
       }
       const moves = history.map((step, move) => {
+          var [row,col] = getPosition(this.state.size, step.squareIndex);
           const desc = move ?
-            'Move #' + move :
+            'Move #(' +row+','+col+')' :
             'Game start';
           return (
-            <li key={move}>
+            <li className={ this.boldClass(move) } key={move}>
               <a href="#" onClick={() => this.jumpTo(move)}>{desc}</a>
             </li>
           );
@@ -102,6 +121,7 @@ export default class Game extends React.Component {
         <div className="game-board">
           <Board
               squares={current.squares}
+              size={this.state.size}
               onClick={(i) => this.handleClick(i)}
               />
         </div>
@@ -113,6 +133,13 @@ export default class Game extends React.Component {
     );
   }
 };
+
+
+function getPosition(size, index){
+    let _col = (index%size)+1;
+    let _row = ((index-(index%size))/size)+1;
+    return [_row, _col];
+}
 
 function calculateWinner(squares) {
   const lines = [
@@ -127,7 +154,9 @@ function calculateWinner(squares) {
   ];
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+    if (squares[a]
+        && squares[a] === squares[b]
+        && squares[a] === squares[c]) {
       return squares[a];
     }
   }
