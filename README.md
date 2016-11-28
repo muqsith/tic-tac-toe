@@ -1,5 +1,5 @@
 # tic-tac-toe
-A simple Tic-Tac-Toe game, following react tutorial (https://facebook.github.io/react/tutorial/tutorial.html) 
+A simple Tic-Tac-Toe game, following react tutorial [trail](https://facebook.github.io/react/tutorial/tutorial.html) 
 
 **Steps**
 
@@ -15,8 +15,6 @@ A simple Tic-Tac-Toe game, following react tutorial (https://facebook.github.io/
 
 6. Play game!
 
-
-This tutorial is walks you through the React learning [trail](https://facebook.github.io/react/tutorial/tutorial.html) trail, hence keep the [trail](https://facebook.github.io/react/tutorial/tutorial.html) trail open in one tab of browser. You can change the code and see it's effect in the browser immediately. 
-
 **PS-**
-This project helps you only to learn about React, in your machine rather than in CodePen. The [trail](https://facebook.github.io/react/tutorial/tutorial.html) trail suggests to use [CodePen](https://codepen.io/ericnakagawa/pen/vXpjwZ?editors=0010) CodePen. But I felt doing it in my machine I was able to do lot more tweaking.
+This project helps you learn React by doing it in your machine instead of doing it in [CodePen](https://codepen.io/ericnakagawa/pen/vXpjwZ?editors=0010) as the [trail](https://facebook.github.io/react/tutorial/tutorial.html) suggests. 
+This project uses babel and webpack for code compilation and build purposes, you can safely ignore these two for now and once you have good grip on React you can then move on to learn about these technologies (and many more in React's ecosystem). 
